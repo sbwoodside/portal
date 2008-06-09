@@ -9,9 +9,10 @@ class PortalController < ApplicationController
   # and render_to_string of the RSS rxml doesn't work either
   def index
     feed_descriptions = [
-          { :type => "flickr", :text => "Flickr image:",
-            :url => "http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200" },
-          { :type => "semacode", :text => "Semacode blog:", :url => "http://semacode.com/posts/rss" }
+          #{ :type => "flickr", :text => "Flickr image:",
+          #  :url => "http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200" },
+          { :type => "semacode", :text => "Semacode blog:", :url => "http://semacode.com/posts/rss" },
+          { :type => "simonwoodside", :text => "Simon Says:", :url => "http://simonwoodside.com:8080/posts/rss" }
         ]
     @all = aggregate_feeds feed_descriptions
   end
