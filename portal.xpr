@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <meta>
+        <filters directoryPatterns="" filePatterns=""
+            positiveFilePatterns="" showHiddenFiles="false"/>
+        <options/>
+    </meta>
+    <projectTree name="portal.xpr">
+        <folder path="portal/app/"/>
+        <folder path="portal/config/"/>
+        <folder path="portal/db/"/>
+        <folder path="portal/doc/"/>
+        <folder path="portal/lib/"/>
+        <folder path="portal/test/"/>
+    </projectTree>
+</project>

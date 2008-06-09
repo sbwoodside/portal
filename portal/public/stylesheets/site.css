@@ -1,0 +1,154 @@
+/* CSS for any of the inside pages.
+   Include only this CSS */
+
+@import url('/stylesheets/shared.css');
+
+
+/*
+ * Layout
+ ***************************/
+div#container { background: url('/images/background/inside.png') no-repeat top center; }
+div#content { position:absolute; left:219px; top:212px; width:505px; }
+div#right-rail { position:absolute; left: 765px; top:235px; width:160px; }
+div#footer { text-align: left; }
+
+
+/*
+ * Accordion
+ ***************************/
+
+h1.accordion_toggle {
+  display: block;
+  height: 30px;
+  background: #ccc;
+  margin: 0; padding: 0 10px;
+  line-height: 30px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+h1.accordion_toggle_active {
+  background: black;
+  color: #ffffff;
+  border-bottom: 1px solid gray;
+}
+div.accordion_content { overflow: hidden; }
+div.accordion_content p { margin-top: 15px; }
+
+/*
+ * Slideshow
+ ***************************/
+#slideshow {
+  height: 300px;
+  padding: 0px;
+  position: relative;
+  width: 360px;
+}
+#slideshow div {
+  left: 0px;
+  position: absolute;
+  text-align: center;
+  top: 0px;
+  width:360px;
+}
+
+/*
+ * Posts and comments
+ ***************************/
+.item_details {
+  float:left;
+  width:170px;
+  margin-left:-180px;
+}
+.item_tags {
+  clear: both;
+}
+table#comment_form {
+  margin-top: 10px;
+}
+table#comment_form td {
+  padding: 2px 2px 2px 0;
+}
+table#comment_form td.labels {
+  width: 130px;
+}
+#comments h4 { }
+#comments .comment_content {
+  margin-top: 16px;
+  width: auto;
+}
+#comments .approval_required {
+  color: #209d20;
+  font-size: 12px;
+  padding: 10px;
+	border: 1px solid #209d20;
+}
+#comments .comment {
+	width: 100%;
+	clear: both;
+}
+#comments .comment_author {
+	font-weight: bold;
+}
+#comments .comment_details {
+	font-size: 12px;
+	color: gray;
+}
+#comments .gravatar {
+	float: right;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	margin: 4px 6px 0 0;
+	border: 1px solid #777;
+	background: #fff url(../images/default_gravatar.gif) no-repeat top left;
+}
+#comments h3#post {
+	clear: both;
+	padding-top: 30px;
+}
+#comments textarea {
+  width: 300px;
+}
+
+
+/*
+ * Errors
+ ***************************/
+.ror_error {
+	font-size: 10px;
+	color: red;
+}
+#comments .errorExplanation {
+  font-size: 12px;
+  line-height: 16px;
+  color: #bd0200;
+  padding: 10px;
+	border: 1px solid #bd0200;
+	margin: 5px 0;
+	background-color: #fffaf9;
+}
+#comments .errorExplanation h2 {
+	font-size: 14px;
+	margin-top: 0;
+	color: #bd0200;
+	font-weight: bold;
+}
+#comments .errorExplanation ul {
+	margin: 0;
+}
+
+/*
+ * Warn Bad Browsers
+ ***************************/
+#warn_bad_browsers {
+	padding: 8px;
+	background-color: #990000;
+	width: 100%;
+	margin: 0;
+	font-size: 11px;
+	color: #fff;
+	border-bottom: 1px solid #000;
+}
+#warn_bad_browsers b {
+	font-weight: bold;
+}

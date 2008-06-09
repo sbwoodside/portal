@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Simon &amp; Woodside</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <%#= auto_discovery_link_tag :rss, Site.rss_url, :title => 'Primary Feed with Everything' %>
+    <%#= auto_discovery_link_tag :rss, Site.posts_rss_url, :title => 'Just the Blog Posts' %>
+    <link type="text/css" rel="Stylesheet" media="screen" href="/stylesheets/site.css"/>
+  </head>
+  <body>
+    <div id="container">
+      <%= render :partial => 'includes/masthead' %>
+      <%= render :partial => 'includes/main_nav' %>
+      <div id="center">
+        <div id="content">
+          <%= yield %>
+          <%= render :partial => 'includes/footer' %>
+        </div>
+      </div>
+      <%= render :partial => 'includes/right_rail' %>
+    </div>
+  </body>
+  
+</html>
