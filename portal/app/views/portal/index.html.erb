@@ -1,18 +1,22 @@
 <div id="feed-stream">
-  <ul>
-    <%
-      lastday = -1
-      @all.each do |item|
-        mydate = item[:obj].date_published.getlocal
-        if mydate.yday != lastday
-          %><h2><%= mydate.strftime('%A, %B %e') %></h2><%
-          lastday = mydate.yday
-        end
-        %>
-        <li class="<%= item[:type] %>">
+  
+  <%
+    lastday = -1
+    @all.each do |item| %>
+      <div class="item">
+      <%
+      mydate = item[:obj].date_published.getlocal
+      if mydate.yday != lastday
+        %><div class="item_details"><p style="text-align:right"><%= mydate.strftime('%A, %B %e') %></p></div><%
+        lastday = mydate.yday
+      end
+      %>
+        <div class="item_content">
           <%= item[:text] %>
           <a href="<%= item[:obj].urls.first %>"><%= item[:obj].title %></a>
-        </li>
-    <% end %>
-  </ul>
+        </div>
+        
+      </div>
+  <% end %>
+
 </div>
