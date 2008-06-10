@@ -32,7 +32,8 @@ private
     result = feed_descriptions.map do |desc|
       get_feed( desc[:type], desc[:text], desc[:url] )
     end
-    result.flatten
+    result = result.flatten
+    result = result.sort_by { |x| x[:obj].date_published }.reverse
   end
   def get_feed( type, text, url )
     feed = FeedNormalizer::FeedNormalizer.parse open( url )
