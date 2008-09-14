@@ -1,0 +1,15 @@
+
+
+
+Here's how to configure cron (must be on a unixy system):
+
+1. determine the path to this directory (and the script update-feeds.sh). I will refer to that as UPDATE_SCRIPT_DIR.
+
+2. On the command line, edit your crontab file:
+  % crontab -e
+
+Add this line:
+
+*/5 * * * * cd UPDATE_SCRIPT_DIR && ./update-feeds.sh  >update-feeds.log 2>&1
+
+Save, and that's it. Every 5 minutes it will update the feeds. If you want it more often, change */5 to for example */1 (every one minute).
