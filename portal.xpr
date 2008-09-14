@@ -12,5 +12,6 @@
         <folder path="portal/doc/"/>
         <folder path="portal/lib/"/>
         <folder path="portal/test/"/>
+        <folder path="portal/vendor/"/>
     </projectTree>
 </project>

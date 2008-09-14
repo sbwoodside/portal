@@ -127,6 +127,7 @@ module FeedNormalizer
       end
 
       ParserRegistry.parsers.each do |parser|
+        #puts "#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}: trying #{parser}"
         result = parser.parse(xml, opts[:loose])
         return result if result
       end
