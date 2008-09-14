@@ -1,9 +1,10 @@
-
-
-
 Here's how to configure cron (must be on a unixy system):
 
-1. determine the path to this directory (and the script update-feeds.sh). I will refer to that as UPDATE_SCRIPT_DIR.
+1. Determine the absolute path to the PRODUCTION version of this directory
+   (in other words, the directory that contains script update-feeds.sh).
+   I will refer to that as UPDATE_SCRIPT_DIR.
+   It could be for example: /disk2/home/simon/deployed-swc-portal/current/lib/cron
+   To do this, go to this directory and type "pwd".
 
 2. On the command line, edit your crontab file:
   % crontab -e
