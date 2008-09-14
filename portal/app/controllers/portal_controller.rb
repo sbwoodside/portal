@@ -38,11 +38,13 @@ private
     result = result.sort_by { |x| x[:obj].date_published }.reverse
   end
   def get_feed( type, text, file )
+    logger.warn "starting to look at #{file}"
     feed = FeedNormalizer::FeedNormalizer.parse File.open( file, 'r' )
     if feed.nil?
       logger.warn "**** Got a nil when using FeedNormalizer.parse File.open( #{file}, 'r' )" 
       return []
     end
+    logger.warn "done with #{file}"
     feed.entries.map do |story|
       { :type => type, :text => text, :obj => story }
     end
