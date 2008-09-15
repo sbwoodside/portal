@@ -4,8 +4,7 @@
   <head>
     <title>Simon &amp; Woodside</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <%#= auto_discovery_link_tag :rss, Site.rss_url, :title => 'Primary Feed with Everything' %>
-    <%#= auto_discovery_link_tag :rss, Site.posts_rss_url, :title => 'Just the Blog Posts' %>
+    <%= auto_discovery_link_tag :rss, 'http://simonwoodside.com/posts/rss', :title => 'Simon Says' %>
     <link type="text/css" rel="Stylesheet" media="screen" href="/stylesheets/inside.css"/>
   </head>
   <body>
@@ -20,6 +19,14 @@
       </div>
       <%= render :partial => 'includes/right_rail' %>
     </div>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      var pageTracker = _gat._getTracker("UA-3449575-2");
+      pageTracker._trackPageview();
+    </script>
   </body>
   
 </html>
