@@ -12,7 +12,8 @@ class PortalController < ApplicationController
     feed_descriptions = [
           { :type => "flickr", :text => "Flickr image:", :file => "#{filesystem_dir}/flickr.xml" },
           { :type => "semacode", :text => "Semacode blog:", :file => "#{filesystem_dir}/semacode.xml" },
-          { :type => "simonwoodside", :text => "Simon Says:", :file => "#{filesystem_dir}/swc.xml" }
+          { :type => "simonwoodside", :text => "Simon Says:", :file => "#{filesystem_dir}/swc.xml" },
+          { :type => "simonwoodside", :text => "Simon Says Comments:", :file => "#{filesystem_dir}/swc-comments.xml" }
           # Add any other feeds that you want here
           # TODO: change this to scan the public/feed-temp directory and open any file that is there
         ]
@@ -39,11 +40,9 @@ private
   end
   def get_feed( type, text, file )
     open_file = File.open( file, 'r' )
+    logger.warn "**** Error: File.open( #{file}, 'r' ) returned nil" and return [] if file.nil?
     feed = FeedNormalizer::FeedNormalizer.parse open_file
-    if feed.nil?
-      logger.warn "**** Got a nil when using FeedNormalizer.parse File.open( #{file}, 'r' )"
-      return []
-    end
+    logger.warn "**** Got a nil when using FeedNormalizer.parse File.open( #{file}, 'r' )" and return [] if feed.nil?
     feed.entries.map do |story|
       { :type => type, :text => text, :obj => story }
     end
