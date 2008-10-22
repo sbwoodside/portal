@@ -40,12 +40,14 @@ private
   end
   def get_feed( type, text, file )
     open_file = File.open( file, 'r' )
-    logger.warn "**** Error: File.open( #{file}, 'r' ) returned nil" and return [] if file.nil?
     feed = FeedNormalizer::FeedNormalizer.parse open_file
     logger.warn "**** Got a nil when using FeedNormalizer.parse File.open( #{file}, 'r' )" and return [] if feed.nil?
     feed.entries.map do |story|
       { :type => type, :text => text, :obj => story }
     end
+  rescue
+    logger.warn "**** Error: get_feed threw an exception. Maybe a file was mising?"
+    return []
   end
   
 end
