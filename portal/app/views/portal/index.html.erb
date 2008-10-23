@@ -5,15 +5,15 @@
     @all.each do |item| %>
       <div class="item">
       <%
-      mydate = item[:obj].date_published.getlocal
+      mydate = item[:feed_item].published.getlocal
       if mydate.yday != lastday
         %><div class="item_details"><p style="text-align:right"><%= mydate.strftime('%A, %B %e') %></p></div><%
         lastday = mydate.yday
       end
       %>
         <div class="item_content">
-          <%= item[:text] %>
-          <a href="<%= item[:obj].urls.first %>"><%= item[:obj].title %></a>
+          <%= item[:title] %>
+          <a href="<%= item[:feed_item].link %>"><%= item[:feed_item].title %></a>
         </div>
         
       </div>

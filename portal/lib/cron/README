@@ -14,3 +14,7 @@ Add this line:
 */5 * * * * cd UPDATE_SCRIPT_DIR && ./update-feeds.sh  >update-feeds.log 2>&1
 
 Save, and that's it. Every 5 minutes it will update the feeds. If you want it more often, change */5 to for example */1 (every one minute).
+
+NOTE: The rails app will automatically pick up any new feeds you add in cron.
+
+However, if you want to edit the display name of the feed, you have to do that in portal_controller.rb by editing the title_map variable.

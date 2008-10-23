@@ -1,4 +1,7 @@
-require 'feed-normalizer'
+require 'feed_tools'
+
+# TODO: needs a cache, and I'm not keen on running FeedUpdater daemon just for this...
+# maybe http://www.google.com/search?q=feedtools+database&hl=en ?
 
 class PortalController < ApplicationController
   layout 'site', :except => ['everything_feed']
@@ -8,16 +11,12 @@ class PortalController < ApplicationController
   # be very afraid of messing with the data returned by FeedNormalizer
   # and render_to_string of the RSS rxml doesn't work either
   def index
-    filesystem_dir = "#{RAILS_ROOT}/public/feed-temp"
-    feed_descriptions = [
-          { :type => "flickr", :text => "Flickr image:", :file => "#{filesystem_dir}/flickr.xml" },
-          { :type => "semacode", :text => "Semacode blog:", :file => "#{filesystem_dir}/semacode.xml" },
-          { :type => "simonwoodside", :text => "Simon Says:", :file => "#{filesystem_dir}/swc.xml" },
-          { :type => "simonwoodside", :text => "Simon Says Comments:", :file => "#{filesystem_dir}/swc-comments.xml" }
-          # Add any other feeds that you want here
-          # TODO: change this to scan the public/feed-temp directory and open any file that is there
-        ]
-    @all = aggregate_feeds feed_descriptions
+    files = Dir[ "#{RAILS_ROOT}/public/feed-temp/*.xml" ] # grab all of the cron-generated feed files
+    uris = files.map { |file| "file:/#{file}" } # convert file paths to file: URIs
+    # Here you should make a map between the "official" feed title in the XML, and what you want to show.
+    title_map = { "Simon Says" => "Simon Says:", "Simon Says: Comments" => "Simon Says Comment:",
+                  "Uploads from sbwoodside" => "Flickr Picture:", "Semacode" => "Semacode Blog:"}
+    @all = aggregate_feeds uris, title_map
   end
   
   def everything_feed
@@ -27,33 +26,20 @@ class PortalController < ApplicationController
   end
 
 private
-  # Fails quietly
-  # Returns an array of hashes, each hash is { :type, :text, :obj }
-  # Where type, text are strings, and obj is a FeedNormalizer object
-  # You might have the read the code to understand FeedNormalizer, sorry.
-  def aggregate_feeds( feed_descriptions )
-    result = feed_descriptions.map do |desc|
-      get_feed( desc[:type], desc[:text], desc[:file] )
-    end
-    result = result.flatten
-    result = result.sort_by { |x| x[:obj].date_published }.reverse
+  # Returns an array of hashes, each hash is { :title, :feed_item }
+  # Where :title is a string for the UI, and :feed_item is a FeedTools:FeedItem object
+  def aggregate_feeds( uris, title_map )
+    all_feed_items = uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
+    all_feed_items.each { |item| item[:title] = title_map[item[:title]] } # map the feed's title to our favored title
+    all_feed_items = all_feed_items.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
   end
-  def get_feed( type, text, file )
-    open_file = File.open( file, 'r' )
-    feed = FeedNormalizer::FeedNormalizer.parse open_file
-    logger.warn "**** Got a nil when using FeedNormalizer.parse File.open( #{file}, 'r' )" and return [] if feed.nil?
-    feed.entries.map do |story|
-      { :type => type, :text => text, :obj => story }
-    end
+  
+  def get_feed( uri )
+    puts "getting feed #{uri}" # it can be a bit slow
+    feed = FeedTools::Feed.open( uri )
+    feed.items.map { |feed_item| { :title => feed.title, :feed_item => feed_item } }
   rescue
-    logger.warn "**** Error: get_feed threw an exception. Maybe a file was mising?"
-    return []
+    logger.warn "**** Error: get_feed threw an exception, but I'm going to continue anyway." and return []
   end
   
 end
-
-
-
-
-
-
