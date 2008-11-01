@@ -1,32 +1,26 @@
 require 'feed_tools'
-
-# TODO: needs a cache, and I'm not keen on running FeedUpdater daemon just for this...
-# maybe http://www.google.com/search?q=feedtools+database&hl=en ?
+require 'timed_fragment_cache'
 
 class PortalController < ApplicationController
   layout 'site', :except => ['everything_feed']
   
-  # main page of the site
-  # are there better ways of doing this? probably. do many ways work? no.
-  # be very afraid of messing with the data returned by FeedNormalizer
-  # and render_to_string of the RSS rxml doesn't work either
+  # main page of the portal
+  # FeedTools has the advantage of handling messed up feeds
   def index
-    files = Dir[ "#{RAILS_ROOT}/public/feed-temp/*.xml" ] # grab all of the cron-generated feed files
-    #uris = files.map { |file| "file:/#{file}" } # convert file paths to file: URIs
-    uris = ['http://simonwoodside.com:8080/posts/rss',
-            'http://simonwoodside.com/comments/rss',
-            'http://semacode.com/posts/rss',
-            'http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200']
-
-    # Here you should make a map between the "official" feed title in the XML, and what you want to show.
-    title_map = { "Simon Says" => "Simon Says:", "Simon Says: Comments" => "Simon Says Comment:",
-                  "Uploads from sbwoodside" => "Flickr Picture:", "Semacode" => "Semacode Blog:"}
-    @all = aggregate_feeds uris, title_map
+    when_fragment_expired 'aggregate', 5.minutes.from_now do
+      # This is the array of feeds you want to aggregate
+      uris = ['http://simonwoodside.com:8080/posts/rss', 'http://simonwoodside.com/comments/rss',
+              'http://semacode.com/posts/rss',
+              'http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200']
+      # Here you should make a map between the "official" feed title in the XML, and what you want to show on the portal
+      title_map = { "Simon Says" => "Simon Says:", "Simon Says: Comments" => "Simon Says Comment:",
+                    "Uploads from sbwoodside" => "Flickr Picture:", "Semacode" => "Semacode Blog:"}
+      @all = aggregate_feeds uris, title_map
+    end
   end
   
-  def everything_feed
+  def everything_feed #TODO FIX
     list # compiles the complete list into @all which is an array
-    # use @all[0]['obj'] to get the 1st FeedNormalizer entry etc.
     render :template => 'feeds/everything'
   end
 
@@ -40,7 +34,7 @@ private
   end
   
   def get_feed( uri )
-    puts "getting feed #{uri}" # it can be a bit slow
+    puts "getting feed #{uri}" # this can be VERY slow
     feed = FeedTools::Feed.open( uri )
     feed.items.map { |feed_item| { :title => feed.title, :feed_item => feed_item } }
   rescue
