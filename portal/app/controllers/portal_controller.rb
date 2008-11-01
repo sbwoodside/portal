@@ -12,7 +12,12 @@ class PortalController < ApplicationController
   # and render_to_string of the RSS rxml doesn't work either
   def index
     files = Dir[ "#{RAILS_ROOT}/public/feed-temp/*.xml" ] # grab all of the cron-generated feed files
-    uris = files.map { |file| "file:/#{file}" } # convert file paths to file: URIs
+    #uris = files.map { |file| "file:/#{file}" } # convert file paths to file: URIs
+    uris = ['http://simonwoodside.com:8080/posts/rss',
+            'http://simonwoodside.com/comments/rss',
+            'http://semacode.com/posts/rss',
+            'http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200']
+
     # Here you should make a map between the "official" feed title in the XML, and what you want to show.
     title_map = { "Simon Says" => "Simon Says:", "Simon Says: Comments" => "Simon Says Comment:",
                   "Uploads from sbwoodside" => "Flickr Picture:", "Semacode" => "Semacode Blog:"}
