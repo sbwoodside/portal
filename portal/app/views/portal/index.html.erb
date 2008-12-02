@@ -1,5 +1,5 @@
 <div id="feed-stream">
-  <% cache 'aggregate', @cache_ttl.from_now do %>
+  <%# cache 'aggregate', @cache_ttl.from_now do %>
     <%
       lastday = -1
       @all.each do |item| %>
@@ -18,5 +18,5 @@
           
         </div>
     <% end %>
-  <% end %>
+  <%# end %>
 </div>

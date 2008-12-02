@@ -2,46 +2,50 @@ require 'feed_tools'
 require 'timed_fragment_cache'
 
 class PortalController < ApplicationController
-  layout 'site', :except => ['everything_feed']
+  layout 'site'
   
-  # main page of the portal
-  # FeedTools has the advantage of handling messed up feeds
+  # We use FeedTools because it can handle messed up feeds. BUT, it's REALLY slow, so we should almost always
+  # read from a (database) cache. Also cache the PARSED data, not the xml data.
+  # TODO add XML feed output
+  
+  # This is the array of feeds you want to aggregate.
+  # Currently if you change this you need to manually delete all the records in the cache
+  @@uris = ['http://simonwoodside.com:8080/posts/rss', 'http://simonwoodside.com/comments/rss',
+            'http://semacode.com/posts/rss',
+            'http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200',
+            'http://api.flickr.com/services/feeds/activity.gne?user_id=20938094@N00']
+  # Here you should make a map between the "official" feed title in the XML, and what you want to show on the portal
+  @@title_map = { "Simon Says" => "Simon Says:", "Simon Says: Comments" => "Simon Says comment:",
+                  "Uploads from sbwoodside" => "Flickr picture:", "Semacode" => "Semacode blog post:",
+                  'Comments on your photostream and/or sets' => 'Flickr comment:' }
+  
   def index
-    @cache_ttl = 60.minutes # should use class variable but it doesn't work
-    when_fragment_expired 'aggregate', @cache_ttl.from_now do
-      # This is the array of feeds you want to aggregate
-      uris = ['http://simonwoodside.com:8080/posts/rss', 'http://simonwoodside.com/comments/rss',
-              'http://semacode.com/posts/rss',
-              'http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200',
-              'http://api.flickr.com/services/feeds/activity.gne?user_id=20938094@N00']
-      # Here you should make a map between the "official" feed title in the XML, and what you want to show on the portal
-      title_map = { "Simon Says" => "Simon Says post:", "Simon Says: Comments" => "Simon Says comment:",
-                    "Uploads from sbwoodside" => "Flickr picture:", "Semacode" => "Semacode blog post:",
-                    'Comments on your photostream and/or sets' => 'Flickr comment:' }
-      @all = aggregate_feeds uris, title_map
+    # When you want to recache the feeds, call /?recache=yes
+    if params[:recache]
+      @@uris.each { |uri| cache_feed uri } # should also expire the cache here
     end
+    # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
+    @all = @@uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
+    @all.each { |item| @@title_map[item[:title]] && item[:title] = @@title_map[item[:title]] } # map the feed's title to our favored title
+    @all = @all.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
   end
   
-  def everything_feed #TODO FIX
-    list # compiles the complete list into @all which is an array
-    render :template => 'feeds/everything'
-  end
-
 private
-  # Returns an array of hashes, each hash is { :title, :feed_item }
-  # Where :title is a string for the UI, and :feed_item is a FeedTools:FeedItem object
-  def aggregate_feeds( uris, title_map )
-    all_feed_items = uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
-    all_feed_items.each { |item| title_map[item[:title]] && item[:title] = title_map[item[:title]] } # map the feed's title to our favored title
-    all_feed_items = all_feed_items.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
+  # This should replace cached feeds with the same URI
+  def cache_feed( uri )
+    puts "cache_feed( #{uri} )" # this can be VERY slow
+    new = CachedFeed.find_or_initialize_by_uri( uri )
+    new.parsed_feed = FeedTools::Feed.open( uri )
+    new.save!
   end
   
   def get_feed( uri )
-    puts "getting feed #{uri}" # this can be VERY slow
-    feed = FeedTools::Feed.open( uri )
-    feed.items.map { |feed_item| { :title => feed.title, :feed_item => feed_item } }
+    #puts "get_feed( #{uri} )"
+    parsed_feed = CachedFeed.find_by_uri( uri ).parsed_feed
+    #puts "parsed_feed = #{parsed_feed.to_s}"
+    parsed_feed.items.map { |feed_item| { :title => parsed_feed.title, :feed_item => feed_item } } # implicit return value
   rescue
-    logger.warn "**** Error: get_feed threw an exception, but I'm going to continue anyway." and return []
+    logger.warn "**** Error: get_feed threw an exception (#{$!}), but I'm failing gracefully." and return []
   end
   
 end
