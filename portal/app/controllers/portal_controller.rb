@@ -3,9 +3,8 @@ require 'timed_fragment_cache'
 
 class PortalController < ApplicationController
   layout 'site'
-  
   # We use FeedTools because it can handle messed up feeds. BUT, it's REALLY slow, so we should almost always
-  # read from a (database) cache. Also cache the PARSED data, not the xml data.
+  # read from a (database/rails) cache. Also cache the PARSED data, not the xml data.
   # TODO add XML feed output
   
   # This is the array of feeds you want to aggregate.
@@ -19,19 +18,21 @@ class PortalController < ApplicationController
                   "Uploads from sbwoodside" => "Flickr picture:", "Semacode" => "Semacode blog post:",
                   'Comments on your photostream and/or sets' => 'Flickr comment:' }
   
-  def index
-    # When you want to recache the feeds, call /?recache=yes
-    if params[:recache]
-      @@uris.each { |uri| cache_feed uri } # should also expire the cache here
+  def index # When you want to recache the feeds, call /?recache=yes. do that regularly from cron.
+    if params[:recache]  # while this is running, the existing cache will still be used
+      @@uris.each { |uri| cache_feed uri }
+      expire_fragment(:controller => 'portal', :action => 'index')
     end
-    # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
-    @all = @@uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
-    @all.each { |item| @@title_map[item[:title]] && item[:title] = @@title_map[item[:title]] } # map the feed's title to our favored title
-    @all = @all.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
+    unless read_fragment({})
+      # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
+      @all = @@uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
+      @all.each { |item| @@title_map[item[:title]] && item[:title] = @@title_map[item[:title]] } # map the feed's title to our favored title
+      @all = @all.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
+    end
   end
   
 private
-  # This should replace cached feeds with the same URI
+  # This will replace cached feeds in the DB that have the same URI
   def cache_feed( uri )
     puts "cache_feed( #{uri} )" # this can be VERY slow
     new = CachedFeed.find_or_initialize_by_uri( uri )
@@ -40,9 +41,7 @@ private
   end
   
   def get_feed( uri )
-    #puts "get_feed( #{uri} )"
     parsed_feed = CachedFeed.find_by_uri( uri ).parsed_feed
-    #puts "parsed_feed = #{parsed_feed.to_s}"
     parsed_feed.items.map { |feed_item| { :title => parsed_feed.title, :feed_item => feed_item } } # implicit return value
   rescue
     logger.warn "**** Error: get_feed threw an exception (#{$!}), but I'm failing gracefully." and return []
