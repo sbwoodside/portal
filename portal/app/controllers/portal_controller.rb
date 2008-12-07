@@ -19,31 +19,35 @@ class PortalController < ApplicationController
                   "Uploads from sbwoodside" => "Flickr picture:", "Semacode" => "Semacode blog post:",
                   'Comments on your photostream and/or sets' => 'Flickr comment:' }
   
-  def index # When you want to recache the feeds, call /?recache=yes. do that regularly from cron.
-    if params[:recache] and @@secret == params[:secret]
-      puts "SIMON -------- ABOUT TO START RECACHE"
-      @@uris.each { |uri| cache_feed uri } # while this is running, the existing cache should still be used
-      puts "SIMON -------- DONE RECACHE ABOUT TO EXPIRE FRAGMENT"
-      expire_fragment(:controller => 'portal', :action => 'index')
-    end
-    unless read_fragment({})
-      # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
-      @all = @@uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
-      @all.each { |item| @@title_map[item[:title]] && item[:title] = @@title_map[item[:title]] } # map the feed's title to our favored title
-      @all = @all.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
-    end
-  end
   #def index # When you want to recache the feeds, call /?recache=yes. do that regularly from cron.
-  #  if params[:recache]
-  #    @@uris.each { |uri| cache_feed uri }
-  #    @all = read_cache
+  #  if params[:recache] and @@secret == params[:secret]
+  #    puts "SIMON -------- ABOUT TO START RECACHE"
+  #    @@uris.each { |uri| cache_feed uri } # while this is running, the existing cache should still be used
+  #    puts "SIMON -------- DONE RECACHE ABOUT TO EXPIRE FRAGMENT"
   #    expire_fragment(:controller => 'portal', :action => 'index')
-  #  else
-  #    unless read_fragment({})
-  #      @all = read_cache
-  #    end
+  #  end
+  #  unless read_fragment({})
+  #    # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
+  #    @all = @@uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
+  #    @all.each { |item| @@title_map[item[:title]] && item[:title] = @@title_map[item[:title]] } # map the feed's title to our favored title
+  #    @all = @all.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
   #  end
   #end
+  def index # When you want to recache the feeds, call /?recache=yes. do that regularly from cron.
+    if params[:recache]
+      puts "SIMON -------- ABOUT TO START RECACHE"
+      @@uris.each { |uri| cache_feed uri }
+      puts "SIMON -------- DONE RECACHE ABOUT TO READ CACHE"
+      @all = read_cache
+      puts "SIMON -------- DONE READ CACHE ABOUT TO EXPIRE FRAGMENT"
+      expire_fragment(:controller => 'portal', :action => 'index')
+      puts "SIMON -------- DONE EXPIRE FRAGMENT"
+    else
+      unless read_fragment({})
+        @all = read_cache
+      end
+    end
+  end
   
 private
   # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
