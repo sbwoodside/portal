@@ -1,12 +1,11 @@
 <div id="feed-stream">
   <% cache do %>
     <%
-      # For some reason accessing the attributes of FeedTools:FeedItem objects is very slow :-(
       lastday = -1
-      @all.each do |item| %>
+      @aggregate.each do |item| %>
         <div class="item">
         <%
-          mydate = item[:feed_item].published.getlocal
+          mydate = item[:feed_item][:published].getlocal
           if mydate.yday != lastday
             %><div class="item_details"><p style="text-align:right"><%= mydate.strftime('%A, %B %e') %></p></div><%
             lastday = mydate.yday
@@ -14,7 +13,7 @@
         %>
           <div class="item_content">
             <%= item[:title] %>
-            <a href="<%= item[:feed_item].link %>"><%= item[:feed_item].title %></a>
+            <a href="<%= item[:feed_item][:link] %>"><%= item[:feed_item][:title] %></a>
           </div>
         </div>
     <% end %>

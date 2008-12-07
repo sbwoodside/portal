@@ -5,7 +5,7 @@ class PortalController < ApplicationController
   layout 'site'
   # Instructions: 1. Change @@secret. 2. Add a cron job to regularly call /?recache=yes&secret=XXXXXXX
   # This is a feed aggregator that uses FeedTools because it handles practically any feed.
-  # But FeedTools is super slow so this aggregator caches the _parsed_ feeds in the database.
+  # But FeedTools is super slow in every way so this aggregator stops using it as soon as possible.
   # TODO add XML feed output
   
   @@secret = "8_2BGh0" # change this to protect your site from DoS attack
@@ -25,7 +25,7 @@ class PortalController < ApplicationController
       expire_fragment(:controller => 'portal', :action => 'index') # next load of index will re-fragment cache
       render :text => "Done recaching feeds"
     else
-      @all = read_cache unless read_fragment({})
+      @aggregate = read_cache unless read_fragment({})
     end
   end
   
@@ -33,17 +33,22 @@ private
   # This will replace cached feeds in the DB that have the same URI. Be careful not to tie up the DB connection.
   def cache_feeds
     puts "caching feeds... (can be slow)"
-    results = @@uris.map { |uri| {:uri => uri, :parsed_feed => FeedTools::Feed.open( uri )} }
-    results.each { |result| CachedFeed.find_or_create_by_uri( result[:uri], :parsed_feed => result[:parsed_feed] ) } # not sure if this does an update...
+    feeds = @@uris.map do |uri|
+      feed = FeedTools::Feed.open( uri )
+      { :uri => uri, :title => feed.title, 
+        :items => feed.items.map { |item| {:title => item.title, :published => item.published, :link => item.link} } }
+    end
+    feeds.each { |feed|
+      new = CachedFeed.find_or_initialize_by_uri feed[:uri]
+      new.parsed_feed = feed
+      new.save!
+    }
   end
-  # Make an array of hashes, each hash is { :title, :feed_item (FeedTools:FeedItem object) }
+  # Make an array of hashes, each hash is { :title, :feed_item }
   def read_cache
-    all = @@uris.map { |uri| get_feed( uri ) } .flatten # get all of the feed data
-    all.each { |item| @@title_map[item[:title]] && item[:title] = @@title_map[item[:title]] } # map the feed's title to our favored title
-    return all.sort_by { |x| x[:feed_item].published }.reverse # sort by date published
-  end
-  def get_feed( uri )
-    parsed_feed = CachedFeed.find_by_uri( uri ).parsed_feed
-    parsed_feed.items.map { |feed_item| { :title => parsed_feed.title, :feed_item => feed_item } } # implicit return value
+    @@uris.map { |uri|
+      feed = CachedFeed.find_by_uri( uri ).parsed_feed
+      feed[:items].map { |item| {:feed_title => @@title_map[feed[:title]] || feed[:title], :feed_item => item} }
+    } .flatten .sort_by { |item| item[:feed_item][:published] } .reverse
   end
 end
