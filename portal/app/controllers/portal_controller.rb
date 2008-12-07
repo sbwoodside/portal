@@ -1,5 +1,4 @@
 require 'feed_tools'
-require 'timed_fragment_cache'
 
 class PortalController < ApplicationController
   layout 'site'
@@ -32,15 +31,14 @@ class PortalController < ApplicationController
 private
   # This will replace cached feeds in the DB that have the same URI. Be careful not to tie up the DB connection.
   def cache_feeds
-    puts "caching feeds... (can be slow)"
+    puts "Caching feeds... (can be slow)"
     feeds = @@uris.map do |uri|
       feed = FeedTools::Feed.open( uri )
       { :uri => uri, :title => feed.title, 
         :items => feed.items.map { |item| {:title => item.title, :published => item.published, :link => item.link} } }
     end
     feeds.each { |feed|
-      new = CachedFeed.find_or_initialize_by_uri feed[:uri]
-      new.parsed_feed = feed
+      new = CachedFeed.find_or_initialize_by_uri( feed[:uri] ) { |f| f.parsed_feed = feed }
       new.save!
     }
   end
