@@ -21,9 +21,9 @@ class PortalController < ApplicationController
   
   def index # When you want to recache the feeds, call /?recache=yes. do that regularly from cron.
     if params[:recache] and @@secret == params[:secret]
-      logger.warn "SIMON -------- ABOUT TO START RECACHE"
+      puts "SIMON -------- ABOUT TO START RECACHE"
       @@uris.each { |uri| cache_feed uri } # while this is running, the existing cache should still be used
-      logger.warn "SIMON -------- DONE RECACHE ABOUT TO EXPIRE FRAGMENT"
+      puts "SIMON -------- DONE RECACHE ABOUT TO EXPIRE FRAGMENT"
       expire_fragment(:controller => 'portal', :action => 'index')
     end
     unless read_fragment({})
@@ -63,7 +63,7 @@ private
     parsed_feed = CachedFeed.find_by_uri( uri ).parsed_feed
     parsed_feed.items.map { |feed_item| { :title => parsed_feed.title, :feed_item => feed_item } } # implicit return value
   rescue
-    logger.warn "**** Error: get_feed threw an exception (#{$!}), but I'm failing gracefully." and return []
+    puts "**** Error: get_feed threw an exception (#{$!}), but I'm failing gracefully." and return []
   end
   
 end
