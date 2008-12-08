@@ -38,7 +38,8 @@ private
         :items => feed.items.map { |item| {:title => item.title, :published => item.published, :link => item.link} } }
     end
     feeds.each { |feed|
-      new = CachedFeed.find_or_initialize_by_uri( feed[:uri] ) { |f| f.parsed_feed = feed }
+      new = CachedFeed.find_or_initialize_by_uri( feed[:uri] )
+      new.parsed_feed = feed
       new.save!
     }
   end
