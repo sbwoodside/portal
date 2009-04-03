@@ -1,0 +1,12 @@
+I wrote myself a feed aggregator for my front page.
+
+For me I run this as a standalone rails app, separately from my weblog. You could do that (and redirect requests to / or /index.html with Apache or nginx/etc. Or you could integrate it into your own app. Up to you.
+
+Features:
+
+    * Will aggregate ANY feed, no matter how badly mangled by the creators, using FeedTools (I also tried feed_normalizer and simple rss but they're not as good)
+    * Deals with slowness of downloading feeds, RSS, etc., and REXML by caching
+    * Deals with need to recache using elegant http/cron periodic system
+    * Display the feeds in a facebook-like news feed format, sorted by dated.
+    * You can easily re-label the feeds, add and renew feeds (in the code)
+    * Only 35 lines of controller code!
