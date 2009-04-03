@@ -6,12 +6,15 @@
         <options/>
     </meta>
     <projectTree name="portal.xpr">
-        <folder path="portal/app/"/>
-        <folder path="portal/config/"/>
-        <folder path="portal/db/"/>
-        <folder path="portal/doc/"/>
-        <folder path="portal/lib/"/>
-        <folder path="portal/test/"/>
-        <folder path="portal/vendor/"/>
+        <folder path="app/"/>
+        <folder path="config/"/>
+        <folder path="db/"/>
+        <folder path="doc/"/>
+        <folder path="log/"/>
+        <folder path="public/"/>
+        <folder path="script/"/>
+        <folder path="test/"/>
+        <file name="Capfile"/>
+        <file name="Rakefile"/>
     </projectTree>
 </project>
