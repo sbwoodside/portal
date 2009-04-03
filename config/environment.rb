@@ -57,3 +57,7 @@ Rails::Initializer.run do |config|
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
 end
+
+# without this mongrel might default to memory store, which doesn't always get flushed between relaunches.
+#ActionController::Base.cache_store = :file_store, "/tmp/cache"
+ActionController::Base.fragment_cache_store = :file_store, "/tmp/cache"
