@@ -9,7 +9,7 @@ class PortalController < ApplicationController
   
   @@secret = "8_2BGh0" # change this to protect your site from DoS attack
   # The array of feeds you want to aggregate. If you change this then manually delete the whole cache.
-  @@uris = ['http://simonwoodside.com:8080/posts/rss', 'http://simonwoodside.com/comments/rss',
+  @@uris = ['http://simonwoodside.com/posts/rss', 'http://simonwoodside.com/comments/rss',
             'http://semacode.com/posts/rss',
             'http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200',
             'http://api.flickr.com/services/feeds/activity.gne?user_id=20938094@N00']
