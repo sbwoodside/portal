@@ -1,0 +1,29 @@
+# See http://github.com/eugenebolshakov/app_config
+# parsed as ERB, apparently, not YAML?
+# accessible as Conf.whatever
+# NB must reload app after changing this file
+
+common:
+  # Change the secret to protect your site from DoS attack
+  secret: 8_2BGh0
+  # The array of feeds you want to aggregate. If you change this then manually delete the whole cache.
+  feeds:
+   - http://simonwoodside.com/posts/rss
+   - http://simonwoodside.com/comments/rss
+   - http://semacode.com/posts/rss
+   - http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200
+   - http://api.flickr.com/services/feeds/activity.gne?user_id=20938094@N00
+  # A map between the original feed item titles in the XML, and the titles you want to show when rendered.
+  # In other words, you can change how the individual feed items are labelled.
+  title_map:
+   'Simon Says' : 'Simon Says:'
+   'Simon Says: Comments' : 'Simon Says comment:'
+   'Uploads from sbwoodside' : 'Flickr picture:'
+   'Semacode' : 'Semacode blog post:'
+   'Comments on your photostream and/or sets' : 'Flickr comment:'
+
+#development:
+
+#test:
+
+#deployment:

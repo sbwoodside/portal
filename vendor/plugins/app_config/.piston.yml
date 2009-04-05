@@ -1,0 +1,8 @@
+--- 
+format: 1
+handler: 
+  commit: 7e70d753c03f1a4e56018a69c122ab8a8c7c17ec
+  branch: master
+lock: 
+repository_class: Piston::Git::Repository
+repository_url: git://github.com/eugenebolshakov/app_config.git

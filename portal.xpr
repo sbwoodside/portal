@@ -14,7 +14,9 @@
         <folder path="public/"/>
         <folder path="script/"/>
         <folder path="test/"/>
+        <folder path="vendor/"/>
         <file name="Capfile"/>
         <file name="Rakefile"/>
+        <file name="README"/>
     </projectTree>
 </project>
