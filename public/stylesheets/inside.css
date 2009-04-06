@@ -7,32 +7,11 @@
 /*
  * Layout
  ***************************/
-div#container { background: url('/images/background/inside.png') no-repeat top center; }
+div#container { background: url('/images/background/header.png') no-repeat top center; }
 div#content { position:absolute; left:219px; top:212px; width:505px; }
 div#right-rail { position:absolute; left: 765px; top:235px; width:160px; background:white; }
 div#footer { text-align: left; }
 
-
-/*
- * Accordion
- ***************************/
-
-h1.accordion_toggle {
-  display: block;
-  height: 30px;
-  background: #ccc;
-  margin: 0; padding: 0 10px;
-  line-height: 30px;
-  border-bottom: 1px solid #ddd;
-  cursor: pointer;
-}
-h1.accordion_toggle_active {
-  background: black;
-  color: #ffffff;
-  border-bottom: 1px solid gray;
-}
-div.accordion_content { overflow: hidden; }
-div.accordion_content p { margin-top: 15px; }
 
 /*
  * Slideshow
@@ -50,6 +29,14 @@ div.accordion_content p { margin-top: 15px; }
   top: 0px;
   width:360px;
 }
+
+/*
+ * Inline list
+ ***************************/
+ul.inline { list-style: none; margin: 0; padding: 0; }
+ul.inline li { display: inline; }
+ul.inline li:after { content: ","; } 
+ul.inline li:last-child:after { content: ""; }
 
 /*
  * Posts and comments
