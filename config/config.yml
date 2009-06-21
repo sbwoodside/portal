@@ -1,5 +1,5 @@
 # See http://github.com/eugenebolshakov/app_config
-# parsed as ERB, apparently, not YAML?
+# parsed as ERB & YAML
 # accessible as Conf.whatever
 # NB must reload app after changing this file
 
@@ -13,14 +13,16 @@ common:
    - http://semacode.com/posts/rss
    - http://api.flickr.com/services/feeds/photos_public.gne?id=20938094@N00&lang=en-us&format=rss_200
    - http://api.flickr.com/services/feeds/activity.gne?user_id=20938094@N00
+   - http://twitter.com/statuses/user_timeline/9182402.rss
   # A map between the original feed item titles in the XML, and the titles you want to show when rendered.
   # In other words, you can change how the individual feed items are labelled.
   title_map:
-   'Simon Says' : 'Simon Says:'
-   'Simon Says: Comments' : 'Simon Says comment:'
-   'Uploads from sbwoodside' : 'Flickr picture:'
-   'Semacode' : 'Semacode blog post:'
-   'Comments on your photostream and/or sets' : 'Flickr comment:'
+   "Simon Says" : "I blogged:"
+   "Simon Says: Comments" : "Someone commented:"
+   "Uploads from sbwoodside" : "I flickr'd:"
+   "Semacode" : "Semacode blog post:"
+   "Comments on your photostream and/or sets" : "Someone flickr commented:"
+   "Twitter / sbwoodside" : "I twittered:"
 
 #development:
 
