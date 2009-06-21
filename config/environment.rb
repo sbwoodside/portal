@@ -42,4 +42,4 @@ end
 
 # without this mongrel might default to memory store, which doesn't always get flushed between relaunches.
 #ActionController::Base.cache_store = :file_store, "/tmp/cache"
-# TODO FIXME ActionController::Base.fragment_cache_store = :file_store, "/tmp/cache"
+ActionController::Base.cache_store = :file_store, "/tmp/cache"
