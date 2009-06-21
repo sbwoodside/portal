@@ -1,8 +1,9 @@
 I wrote myself a feed aggregator for my front page.
 
 For me I run this as a standalone rails app, separately from my weblog.
-You could do that (and redirect requests to / or /index.html with Apache or nginx/etc.
+You could do that (and redirect requests to / or /index.html with Apache or nginx/etc. )
 Or you could integrate it into your own app. Up to you.
+Because I want to use it as my home page, everything come to / or /index.html, using query parameters.
 
 FEATURES
  * Will aggregate ANY feed, no matter how badly mangled by the creators, using FeedTools (I also tried feed_normalizer and simple rss but they're not as good)
