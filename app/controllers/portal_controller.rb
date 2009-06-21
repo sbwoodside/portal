@@ -35,8 +35,12 @@ private
   # Make an array of hashes, each hash is { :title, :feed_item }
   def read_cache
     Conf.feeds.map { |uri|
-      feed = CachedFeed.find_by_uri( uri ).parsed_feed
-      feed[:items].map { |item| {:feed_title => Conf.title_map[feed[:title]] || feed[:title], :feed_item => item} }
+      begin
+        feed = CachedFeed.find_by_uri( uri ).parsed_feed
+        feed[:items].map { |item| {:feed_title => Conf.title_map[feed[:title]] || feed[:title], :feed_item => item} }
+      rescue
+        [] # because there might not be anything cached for some feed(s)
+      end
     } .flatten .sort_by { |item| item[:feed_item][:published] } .reverse
   end
 end
