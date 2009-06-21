@@ -7,7 +7,7 @@
         <%
           mydate = item[:feed_item][:published].getlocal
           if mydate.yday != lastday
-            %><div class="item_details"><p style="text-align:right"><%= mydate.strftime('%A, %B %e') %></p></div><%
+            %><div class="item_details" style="text-align:right"><%= mydate.strftime('%A, %B %e') %></div><%
             lastday = mydate.yday
           end
         %>
